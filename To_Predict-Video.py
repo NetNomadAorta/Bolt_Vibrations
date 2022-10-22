@@ -112,7 +112,6 @@ fps_start_time = time.time()
 
 color_list =['green', 'red', 'blue', 'magenta', 'orange', 'cyan', 'lime', 'turquoise', 'yellow']
 pred_dict = {}
-ii = 0
 for video_name in os.listdir(TO_PREDICT_PATH):
     video_path = os.path.join(TO_PREDICT_PATH, video_name)
     
@@ -133,6 +132,7 @@ for video_name in os.listdir(TO_PREDICT_PATH):
                                  )
                                 )
     
+    ii = 0
     count = 1
     while success:
         success, image_b4_color = video_capture.read()

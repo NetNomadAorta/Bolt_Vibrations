@@ -20,15 +20,10 @@ SAVE_NAME_OD = "./Models-OD/Bolt_Vibrations-0.model"
 DATASET_PATH = "./Training_Data/" + SAVE_NAME_OD.split("./Models-OD/",1)[1].split("-",1)[0] +"/"
 IMAGE_SIZE              = int(re.findall(r'\d+', SAVE_NAME_OD)[-1] ) # Row and column number 
 TO_PREDICT_PATH         = "./Images/Prediction_Images/To_Predict/"
-# TO_PREDICT_PATH         = "//mcrtp-sftp-01/aoitool/SMiPE4-623/XDCC000109C2/"            # USE FOR XDisplay LOTS!
 PREDICTED_PATH          = "./Images/Prediction_Images/Predicted_Images/"
-# PREDICTED_PATH          = "//mcrtp-sftp-01/aoitool/SMiPE4-623-Cropped/XDCC000109C2/"    # USE FOR XDisplay LOTS!
-# PREDICTED_PATH        = "C:/Users/troya/.spyder-py3/ML-Defect_Detection/Images/Prediction_Images/To_Predict_Images/"
 SAVE_ANNOTATED_IMAGES   = True
-SAVE_ORIGINAL_IMAGE     = False
-SAVE_CROPPED_IMAGES     = False
-DIE_SPACING_SCALE       = 0.99
 MIN_SCORE               = 0.7 # Default 0.5
+WIDEN_TOGGLE            = False
 
 
 def time_convert(sec):
@@ -169,21 +164,22 @@ for video_name in os.listdir(TO_PREDICT_PATH):
         labels_found = [str(classes_1[class_index]) 
                         for index, class_index in enumerate(die_class_indexes)]
         
-        boxes_widened = dieCoordinates
-        # Widens boxes
-        for i in range(len(dieCoordinates)):
-            box_width = dieCoordinates[i,2]-dieCoordinates[i,0]
-            box_height = dieCoordinates[i,3]-dieCoordinates[i,1]
+        if WIDEN_TOGGLE:
+            boxes_widened = dieCoordinates
+            # Widens boxes
+            for i in range(len(dieCoordinates)):
+                box_width = dieCoordinates[i,2]-dieCoordinates[i,0]
+                box_height = dieCoordinates[i,3]-dieCoordinates[i,1]
+                
+                # Width
+                boxes_widened[i, 0] = max(dieCoordinates[i][0] - int(box_width/3), 0)
+                boxes_widened[i, 2] = min(dieCoordinates[i][2] + int(box_width/3), transformed_image.shape[2])
+                
+                # Height
+                boxes_widened[i, 1] = max(dieCoordinates[i][1] - int(box_height/3), 0)
+                boxes_widened[i, 3] = min(dieCoordinates[i][3] + int(box_height/3), transformed_image.shape[1])
             
-            # Width
-            boxes_widened[i, 0] = max(dieCoordinates[i][0] - int(box_width/3), 0)
-            boxes_widened[i, 2] = min(dieCoordinates[i][2] + int(box_width/3), transformed_image.shape[2])
-            
-            # Height
-            boxes_widened[i, 1] = max(dieCoordinates[i][1] - int(box_height/3), 0)
-            boxes_widened[i, 3] = min(dieCoordinates[i][3] + int(box_height/3), transformed_image.shape[1])
-        
-        dieCoordinates = boxes_widened
+            dieCoordinates = boxes_widened
         
         if SAVE_ANNOTATED_IMAGES:
             predicted_image = draw_bounding_boxes(transformed_image,

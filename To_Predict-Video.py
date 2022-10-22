@@ -237,7 +237,7 @@ for video_name in os.listdir(TO_PREDICT_PATH):
                 start_point_text = (start_point[0], max(start_point[1]-5,0) )
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 fontScale = 1.0
-                thickness = 1
+                thickness = 2
                 cv2.putText(predicted_image_cv2, labels_found[dieCoordinate_index], 
                             start_point_text, font, fontScale, color, thickness)
             
@@ -252,10 +252,16 @@ for video_name in os.listdir(TO_PREDICT_PATH):
             fps_end_time = time.time()
             fps_time_lapsed = fps_end_time - fps_start_time
             
+            images_left = frame_count - ii
+            time_left = images_left/(round(tenScale/fps_time_lapsed, 2)) # in seconds
+            mins = time_left // 60
+            sec = time_left % 60
+            
             sys.stdout.write('\033[2K\033[1G')
             print("  " + str(ii) + " of " 
                   + str(frame_count), 
-                  "-",  round(tenScale/fps_time_lapsed, 2), "FPS",
+                  "-",  round(tenScale/fps_time_lapsed, 2), "FPS -",
+                  "Time Left: {0}m:{1}s".format(int(mins), round(sec) ),
                   end="\r"
                   )
             fps_start_time = time.time()

@@ -253,7 +253,7 @@ for video_name in os.listdir(TO_PREDICT_PATH):
                 
                 # Draws lines in graph
                 line_scale = 30
-                for index in range(3):
+                for index in range(5):
                     if index == 0:
                         thickness = 2
                     else:

@@ -14,6 +14,7 @@ from pycocotools.coco import COCO
 from albumentations.pytorch import ToTensorV2
 import shutil
 import sys
+from math import sqrt
 
 
 # User parameters
@@ -240,6 +241,35 @@ for video_name in os.listdir(TO_PREDICT_PATH):
                 thickness = 2
                 cv2.putText(predicted_image_cv2, labels_found[dieCoordinate_index], 
                             start_point_text, font, fontScale, color, thickness)
+                
+                # Draws frequency graph
+                # -------------------------------------------------------------
+                # Starting and end poitns of base of graph
+                x_0 = int(transformed_image.shape[2]*.1)
+                y_0 = int(transformed_image.shape[1]*.9)
+                x_end = int(transformed_image.shape[2]*.9)
+                
+                # Draws lines in graph
+                cv2.line(
+                    predicted_image_cv2, 
+                    pt1=(x_0,  y_0), 
+                    pt2=(x_end, y_0), 
+                    color=(255,255,255), thickness=5
+                    ) 
+                
+                # Calculates distance from center of original bolt image to now
+                length_x = abs(center_x - center_x_orig)
+                length_y = abs(center_y - center_y_orig)
+                distance = int(sqrt( (length_x)**2 + (length_y)**2 ))
+                
+                # Draws dot of distance of center of bolt to original spot
+                cv2.circle(predicted_image_cv2, 
+                           center=(x_0 + ii, y_0 + distance*10), radius=0, 
+                           color=(255,0,255), thickness=1
+                           )
+                
+                
+                # -------------------------------------------------------------
             
             # Saves video with bounding boxes
             video_out.write(predicted_image_cv2)

@@ -13,6 +13,7 @@ from pycocotools.coco import COCO
 # Now, we will define our transforms
 from albumentations.pytorch import ToTensorV2
 import shutil
+import sys
 
 
 # User parameters
@@ -219,15 +220,21 @@ for video_name in os.listdir(TO_PREDICT_PATH):
         if ii % tenScale == 0:
             fps_end_time = time.time()
             fps_time_lapsed = fps_end_time - fps_start_time
+            
+            sys.stdout.write('\033[2K\033[1G')
             print("  " + str(ii) + " of " 
                   + str(frame_count), 
-                  "-",  round(tenScale/fps_time_lapsed, 2), "FPS")
+                  "-",  round(tenScale/fps_time_lapsed, 2), "FPS",
+                  end="\r"
+                  )
             fps_start_time = time.time()
         
         count += 1
         
     video_out.release()
-
+    
+    # Makes new line so that next class progress status can show in terminal/shell
+    print("")
 
 print("Done!")
 

@@ -133,6 +133,8 @@ for video_name in os.listdir(TO_PREDICT_PATH):
                                  )
                                 )
     
+    graph_x_list = []
+    graph_y_list = []
     ii = 0
     count = 1
     while success:
@@ -245,28 +247,59 @@ for video_name in os.listdir(TO_PREDICT_PATH):
                 # Draws frequency graph
                 # -------------------------------------------------------------
                 # Starting and end poitns of base of graph
-                x_0 = int(transformed_image.shape[2]*.1)
-                y_0 = int(transformed_image.shape[1]*.9)
-                x_end = int(transformed_image.shape[2]*.9)
+                x_0 = int(transformed_image.shape[2]*.05)
+                y_0 = int(transformed_image.shape[1]*.95)
+                x_end = int(transformed_image.shape[2]*.95)
                 
                 # Draws lines in graph
+                line_scale = 30
                 cv2.line(
                     predicted_image_cv2, 
-                    pt1=(x_0,  y_0), 
-                    pt2=(x_end, y_0), 
-                    color=(255,255,255), thickness=5
+                    pt1=(x_0,  y_0-line_scale*0), 
+                    pt2=(x_end, y_0-line_scale*0), 
+                    color=(255,255,255), thickness=2
+                    ) 
+                cv2.line(
+                    predicted_image_cv2, 
+                    pt1=(x_0,  y_0-line_scale*1), 
+                    pt2=(x_end, y_0-line_scale*1), 
+                    color=(255,255,255), thickness=1
+                    ) 
+                cv2.line(
+                    predicted_image_cv2, 
+                    pt1=(x_0,  y_0-line_scale*2), 
+                    pt2=(x_end, y_0-line_scale*2), 
+                    color=(255,255,255), thickness=1
+                    ) 
+                cv2.line(
+                    predicted_image_cv2, 
+                    pt1=(x_0,  y_0-line_scale*3), 
+                    pt2=(x_end, y_0-line_scale*3), 
+                    color=(255,255,255), thickness=1
                     ) 
                 
                 # Calculates distance from center of original bolt image to now
                 length_x = abs(center_x - center_x_orig)
                 length_y = abs(center_y - center_y_orig)
-                distance = int(sqrt( (length_x)**2 + (length_y)**2 ))
+                distance = int(sqrt( (length_x)**2 + (length_y)**2 )*line_scale)
                 
-                # Draws dot of distance of center of bolt to original spot
-                cv2.circle(predicted_image_cv2, 
-                           center=(x_0 + ii, y_0 + distance*10), radius=0, 
-                           color=(255,0,255), thickness=1
-                           )
+                graph_x_list.append(x_0 + ii)
+                graph_y_list.append(y_0 - distance)
+                
+                for index in range(len(graph_x_list)):
+                    # Draw connecting dots of distance of center of 
+                    #  bolt to original spot
+                    cv2.line(
+                        predicted_image_cv2, 
+                        pt1=(graph_x_list[max(index-1,0)], graph_y_list[max(index-1,0)]), 
+                        pt2=(graph_x_list[index], graph_y_list[index]), 
+                        color=(255,255,255), thickness=1
+                        ) 
+                    cv2.circle(
+                        predicted_image_cv2, 
+                        center=(graph_x_list[index], graph_y_list[index]), 
+                        radius=0, color=(255,0,255), thickness=2
+                        )
                 
                 
                 # -------------------------------------------------------------

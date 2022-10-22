@@ -247,36 +247,23 @@ for video_name in os.listdir(TO_PREDICT_PATH):
                 # Draws frequency graph
                 # -------------------------------------------------------------
                 # Starting and end poitns of base of graph
-                x_0 = int(transformed_image.shape[2]*.05)
-                y_0 = int(transformed_image.shape[1]*.95)
-                x_end = int(transformed_image.shape[2]*.95)
+                x_0 = int(transformed_image.shape[2]*.01)
+                y_0 = int(transformed_image.shape[1]*.90)
+                x_end = int(transformed_image.shape[2]*.99)
                 
                 # Draws lines in graph
                 line_scale = 30
-                cv2.line(
-                    predicted_image_cv2, 
-                    pt1=(x_0,  y_0-line_scale*0), 
-                    pt2=(x_end, y_0-line_scale*0), 
-                    color=(255,255,255), thickness=2
-                    ) 
-                cv2.line(
-                    predicted_image_cv2, 
-                    pt1=(x_0,  y_0-line_scale*1), 
-                    pt2=(x_end, y_0-line_scale*1), 
-                    color=(255,255,255), thickness=1
-                    ) 
-                cv2.line(
-                    predicted_image_cv2, 
-                    pt1=(x_0,  y_0-line_scale*2), 
-                    pt2=(x_end, y_0-line_scale*2), 
-                    color=(255,255,255), thickness=1
-                    ) 
-                cv2.line(
-                    predicted_image_cv2, 
-                    pt1=(x_0,  y_0-line_scale*3), 
-                    pt2=(x_end, y_0-line_scale*3), 
-                    color=(255,255,255), thickness=1
-                    ) 
+                for index in range(3):
+                    if index == 0:
+                        thickness = 2
+                    else:
+                        thickness = 1
+                    cv2.line(
+                        predicted_image_cv2, 
+                        pt1=(x_0,  y_0-line_scale*index), 
+                        pt2=(x_end, y_0-line_scale*index), 
+                        color=(255,255,255), thickness=thickness
+                        )
                 
                 # Calculates distance from center of original bolt image to now
                 length_x = abs(center_x - center_x_orig)
@@ -309,7 +296,6 @@ for video_name in os.listdir(TO_PREDICT_PATH):
         
         
         tenScale = 10
-    
         ii += 1
         if ii % tenScale == 0:
             fps_end_time = time.time()

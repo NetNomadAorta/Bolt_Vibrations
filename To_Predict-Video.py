@@ -197,6 +197,37 @@ for video_name in os.listdir(TO_PREDICT_PATH):
             predicted_image_cv2 = cv2.cvtColor(predicted_image_cv2, cv2.COLOR_RGB2BGR)
             
             for dieCoordinate_index, dieCoordinate in enumerate(dieCoordinates):
+                
+                # Finds center x and y coordinates for "Bolt" label bbox
+                center_x = int(dieCoordinate[0] 
+                                      + (dieCoordinate[2] - dieCoordinate[0])/2
+                                      )
+                center_y = int(dieCoordinate[1] 
+                                      + (dieCoordinate[3] - dieCoordinate[1])/2
+                                          )
+                if count ==1:
+                    center_x_orig = center_x
+                    center_y_orig = center_y
+                
+                # Draws line from orig cirgle to center of bolt now
+                cv2.line(predicted_image_cv2, 
+                         pt1=(center_x_orig, center_y_orig), 
+                         pt2=(center_x, center_y), 
+                         color=(255,255,255), thickness=1
+                         ) 
+                
+                # Draw circle over center of start image's bolt
+                cv2.circle(predicted_image_cv2, 
+                           center=(center_x_orig, center_y_orig), radius=5, 
+                           color=(0,255,0), thickness=2, lineType=8, shift=0
+                           )
+                
+                # Draw circle over center of bolt now
+                cv2.circle(predicted_image_cv2, 
+                           center=(center_x, center_y), radius=2, 
+                           color=(255,0,255), thickness=2, lineType=8, shift=0
+                           )
+                
                 start_point = ( int(dieCoordinate[0]), int(dieCoordinate[1]) )
                 # end_point = ( int(dieCoordinate[2]), int(dieCoordinate[3]) )
                 color = (255, 255, 255)
@@ -206,7 +237,7 @@ for video_name in os.listdir(TO_PREDICT_PATH):
                 start_point_text = (start_point[0], max(start_point[1]-5,0) )
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 fontScale = 1.0
-                thickness = 2
+                thickness = 1
                 cv2.putText(predicted_image_cv2, labels_found[dieCoordinate_index], 
                             start_point_text, font, fontScale, color, thickness)
             
